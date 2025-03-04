@@ -10,7 +10,7 @@ def main():
 
     flag_bgm = False
     music.music_set_volume(20)
-    tts.lang("en-US")
+    #tts.lang("en-US")
 
     safeDistance = 20
     
