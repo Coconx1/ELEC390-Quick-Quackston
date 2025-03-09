@@ -20,8 +20,10 @@ def main():
 
         gm_val_list = px.get_grayscale_data()
         gm_state = get_status(gm_val_list)
-        print("gm_val_list: %s, %s"%(gm_val_list, gm_state))
+        print("gm_val_list: %s, %s"%( gm_val_list, gm_state ))
          _state = px.get_line_status(val_list)
+
+
 
         #read the obstacle distance in front of the car
         distance = round(px.ultrasonic.read(), 2)
