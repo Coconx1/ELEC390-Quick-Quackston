@@ -22,7 +22,12 @@ prevRx = []
 
 while success:
     success, image = vidcap.read()
-    frame = cv2.resize(image, (640,480))
+
+    #check if before resizing to stop error
+    if success:
+        frame = cv2.resize(image, (640,480))
+    else:
+        break
 
     # Vertices of the polygon (dots)
     topL = (222,387)
