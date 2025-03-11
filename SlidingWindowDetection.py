@@ -1,9 +1,10 @@
 import cv2
 import numpy as np
+from aiymakerkit import vision
 
 #import video from camera
-vidcap = cv2.VideoCapture("LaneVideo.mp4") #id should be 0?
-success, image = vidcap.read()
+#vidcap = cv2.VideoCapture("LaneVideo.mp4") #id should be 0?
+#success, image = vidcap.read()
 
 def nothing(x):
     pass
@@ -20,14 +21,15 @@ cv2.createTrackbar("U - V", "Trackbars", 255, 255, nothing)
 prevLx = []
 prevRx = []
 
-while success:
-    success, image = vidcap.read()
+#while success:
+for frame in vision.get_frames():
+    #success, image = vidcap.read()
 
     #check if before resizing to stop error
-    if success:
-        frame = cv2.resize(image, (640,480))
-    else:
-        break
+    # if success:
+    #     frame = cv2.resize(image, (640,480))
+    # else:
+    #     break
 
     # Vertices of the polygon (dots)
     topL = (222,387)
@@ -170,6 +172,11 @@ while success:
     # Ensure both lx and rx have the same length
     min_length = min(len(leftLaneX), len(rightLaneX))
 
+    #Calculate the lateral offset
+
+   
+   
+   
     # Create the top and bottom points for the quadrilateral to draw onto the frame
     top_left = (leftLaneX[0], 472)
     bottom_left = (leftLaneX[min_length-1], 0)
@@ -202,14 +209,14 @@ while success:
     #Combine the original frame with the lane image
     result = cv2.addWeighted(frame, 1, original_perpective_lane_image, 0.5, 0)
 
-    cv2.imshow("Original", frame)
-    cv2.imshow("Bird's Eye View", transformed_frame)
-    cv2.imshow("Lane Detection - Image Thresholding", mask)
-    cv2.imshow("Lane Detection - Sliding Windows", msk)
-    cv2.imshow('Lane Detection', result)
+    #cv2.imshow("Original", frame)
+    #cv2.imshow("Bird's Eye View", transformed_frame)
+    #cv2.imshow("Lane Detection - Image Thresholding", mask)
+    #cv2.imshow("Lane Detection - Sliding Windows", msk)
+    #cv2.imshow('Lane Detection', result)
 
     if cv2.waitKey(10) == 27:
         break
 
-vidcap.release()
+#vidcap.release()
 cv2.destroyAllWindows()
