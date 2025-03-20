@@ -1,6 +1,8 @@
+
 import cv2
 import numpy as np
 from aiymakerkit import vision
+from picarx import picarx
 
 #import video from camera
 #vidcap = cv2.VideoCapture("LaneVideo.mp4") #id should be 0?
@@ -28,6 +30,7 @@ prevRx = []
 prevLy = []
 prevRy = []
 
+#px = picarx()
 def controlSteeringAngle(offset_meters, curvature): 
     global prev_error, integral
     
@@ -35,7 +38,7 @@ def controlSteeringAngle(offset_meters, curvature):
     Kp = 1.5
     Ki = 0.01
     Kd = 0.1
-    K_ff = 0.5  
+    K_ff = 0.3
     
     dt = 1/30  # Assuming 30 FPS
     
@@ -50,26 +53,29 @@ def controlSteeringAngle(offset_meters, curvature):
     steering_angle = steering_feedback + steering_feedforward
     
     prev_error = error
-    return np.clip(steering_angle, -30, 30)
+    #return steering_angle
+    return np.clip(steering_angle, -30, 20)
 
 def calculateCurvature(left_fit, right_fit, y_eval=472): 
     # Convert pixel space to meters (calibrate for your setup!)
-    ym_per_pix = 0.03/100  # meters per pixel in y dimension
-    xm_per_pix = 0.3/150   # meters per pixel in x dimension
+    ym_per_pix = 0.05/100  # meters per pixel in y dimension
+    xm_per_pix = 0.005/150   # meters per pixel in x dimension
     
     # Calculate curvature in real-world space
     left_curverad = ((1 + (2*left_fit[0]*y_eval*ym_per_pix + left_fit[1])**2)**1.5) / abs(2*left_fit[0])
 
     right_curverad = ((1 + (2*right_fit[0]*y_eval*ym_per_pix + right_fit[1])**2)**1.5) / abs(2*right_fit[0])
 
-    return (left_curverad + right_curverad) / 2
+    print(f"CURVATURE: {(((left_curverad + right_curverad) / 2) * 1e-4)} ")
+
+    return (((left_curverad + right_curverad) / 2) * 1e-4)
 
 
 def controlSpeed (steeringAngle, curvature):
 
-    maxSpeed = 25
+    maxSpeed = 15
 
-    speed = maxSpeed - (abs(steeringAngle) * 0.5 + curvature * 5)
+    speed = maxSpeed - (abs(steeringAngle) * 0.5 + curvature)
 
     speed = max(0, min(maxSpeed, speed))
 
@@ -78,13 +84,13 @@ def controlSpeed (steeringAngle, curvature):
 
 #while success:
 for frame in vision.get_frames():
-    #success, image = vidcap.read()
+   # success, image = vidcap.read()
 
     #check if before resizing to stop error
-    # if success:
-    #     frame = cv2.resize(image, (640,480))
-    # else:
-    #     break
+    #if success:
+    #    frame = cv2.resize(image, (640,480))
+  #  else:
+   #     break
 
     # Vertices of the polygon (dots)
     topL = (222,387)
@@ -259,8 +265,9 @@ for frame in vision.get_frames():
         lane_center = (left_x + right_x) / 2
         frame_center = 320
         offset_pixels = lane_center - frame_center
-        xm_per_pixel = 0.3 / (right_x - left_x)
+        xm_per_pixel = 0.01 / (right_x - left_x)
         offset_meters = offset_pixels * xm_per_pixel
+        print(f"OFFSET METERS: {offset_meters}")
     else:
         offset_meters = 0
 
@@ -268,8 +275,15 @@ for frame in vision.get_frames():
     #USE THIS ANGLE AND SPEED TO CONTROL THE CAR
     angle = controlSteeringAngle(offset_meters, curvature)
 
+    print(f"ANGLE: {angle}  \n")
+
+    px.set_dir_servo_angle(angle)
+
     setSpeed = controlSpeed(angle, curvature)
+
+    print(f"SPEED: {setSpeed} \n")
     
+    px.forward(setSpeed)
    
    
    
@@ -309,8 +323,8 @@ for frame in vision.get_frames():
     #cv2.imshow("Bird's Eye View", transformed_frame)
     #cv2.imshow("Lane Detection - Image Thresholding", mask)
     #cv2.imshow("Lane Detection - Sliding Windows", msk)
-    #cv2.imshow('Lane Detection', result)
-
+    cv2.imshow('Lane Detection', result)
+ 
     if cv2.waitKey(10) == 27:
         break
 
