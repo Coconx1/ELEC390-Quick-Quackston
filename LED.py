@@ -37,10 +37,10 @@ try:
         #For stoping, this ASSSUMES WE NEED TO STOP THE CAR/SLOW DOWN FOR 5 SECONDS.
             #Run both pins, because one not connected to PCB. 
         GPIO.output(4, GPIO.HIGH) # Turn LED on
-        GPIO.output(27, GPIO.HIGH) # Turn LED on
+        GPIO.output(17, GPIO.HIGH) # Turn LED on
         time.sleep(5)              # Wait 5 second
         GPIO.output(4, GPIO.LOW)  # Turn LED off
-        GPIO.output(27, GPIO.LOW)  # Turn LED off
+        GPIO.output(17, GPIO.LOW)  # Turn LED off
 
 except KeyboardInterrupt:
     pass
