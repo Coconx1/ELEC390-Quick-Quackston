@@ -27,4 +27,14 @@ detector = vision.Detector(ROAD_SIGN_DETECTION_MODEL)
 labels = read_label_file(ROAD_SIGN_DETECTION_LABELS)
 for frame in vision.get_frames():
     objects = detector.get_objects(frame, threshold=0.4)
+    for obj in objects:
+        xmin,ymin,xmax,ymax = obj.bounding_box
+        width  = xmax - xmin
+        height = ymax - ymin
+        print(f"Detected {obj.label} with width={width}, height={height}")
+        # focal = 
+        # if (obj.label == 'stop'):
+        #     dist = (50 * focal) / width
+        #     if (dist <= 100):
+
     vision.draw_objects(frame, objects, labels)
