@@ -1,0 +1,12 @@
+duckspecial
+onewayright
+vehicle
+noentry
+onewayroad
+stop
+crosswalk
+speedlimit
+duck
+onewayleft
+trafficlight
+yield
