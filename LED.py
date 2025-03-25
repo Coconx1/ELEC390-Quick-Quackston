@@ -4,10 +4,10 @@ import time
 # Use BCM numbering for the GPIO pins
 GPIO.setmode(GPIO.BCM)
 # Setup GPIO pins as an output
-GPIO.setup(17, GPIO.OUT) #Blinker L
+GPIO.setup(27, GPIO.OUT) #Blinker L
 GPIO.setup(8, GPIO.OUT) #Blinker R
 GPIO.setup(4, GPIO.OUT) #Stop L
-GPIO.setup(27, GPIO.OUT) #Stop R
+GPIO.setup(17, GPIO.OUT) #Stop R
 
 try:
     while True:
